@@ -133,8 +133,9 @@ resource "null_resource" "control_plane_config" {
     user           = "root"
     private_key    = var.ssh_private_key
     agent_identity = local.ssh_agent_identity
-    host           = module.control_planes[each.key].ipv4_address
-    port           = var.ssh_port
+    # host           = module.control_planes[each.key].ipv4_address
+    host = module.control_planes[each.key].private_ipv4_address != "" ? module.control_planes[each.key].private_ipv4_address : module.control_planes[each.key].ipv4_address
+    port = var.ssh_port
   }
 
   # Generating k3s server config file
@@ -164,8 +165,9 @@ resource "null_resource" "control_planes" {
     user           = "root"
     private_key    = var.ssh_private_key
     agent_identity = local.ssh_agent_identity
-    host           = module.control_planes[each.key].ipv4_address
-    port           = var.ssh_port
+    # host           = module.control_planes[each.key].ipv4_address
+    host = module.control_planes[each.key].private_ipv4_address != "" ? module.control_planes[each.key].private_ipv4_address : module.control_planes[each.key].ipv4_address
+    port = var.ssh_port
   }
 
   # Install k3s server
