@@ -48,7 +48,7 @@ resource "hcloud_server" "server" {
     user           = "root"
     private_key    = var.ssh_private_key
     agent_identity = local.ssh_agent_identity
-    host           = self.ipv4_address
+    host           = var.private_ipv4 != "" ? var.private_ipv4 : hcloud_server.server.ipv4_address
     port           = var.ssh_port
   }
 
@@ -63,7 +63,7 @@ resource "hcloud_server" "server" {
   # Wait for MicroOS to reboot and be ready.
   provisioner "local-exec" {
     command = <<-EOT
-      until ssh ${local.ssh_args} -i /tmp/${random_string.identity_file.id} -o ConnectTimeout=2 -p ${var.ssh_port} root@${self.ipv4_address} true 2> /dev/null
+      until ssh ${local.ssh_args} -i /tmp/${random_string.identity_file.id} -o ConnectTimeout=2 -p ${var.ssh_port} root@${var.private_ipv4 != "" ? var.private_ipv4 : hcloud_server.server.ipv4_address} true 2> /dev/null
       do
         echo "Waiting for MicroOS to become available..."
         sleep 3
@@ -103,7 +103,7 @@ resource "null_resource" "registries" {
     user           = "root"
     private_key    = var.ssh_private_key
     agent_identity = local.ssh_agent_identity
-    host           = hcloud_server.server.ipv4_address
+    host           = var.private_ipv4 != "" ? var.private_ipv4 : hcloud_server.server.ipv4_address
     port           = var.ssh_port
   }
 
@@ -163,7 +163,7 @@ resource "null_resource" "zram" {
     user           = "root"
     private_key    = var.ssh_private_key
     agent_identity = local.ssh_agent_identity
-    host           = hcloud_server.server.ipv4_address
+    host           = var.private_ipv4 != "" ? var.private_ipv4 : hcloud_server.server.ipv4_address
     port           = var.ssh_port
   }
 

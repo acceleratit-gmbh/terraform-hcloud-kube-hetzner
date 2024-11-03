@@ -814,7 +814,7 @@ cloudinit_write_files_common = <<EOT
 
     sleep 11
 
-    INTERFACE=$(ip link show | awk '/^3:/{print $2}' | sed 's/://g')
+    INTERFACE=$(ip link show | awk '/^5:/{print $2}' | sed 's/://g')
     MAC=$(cat /sys/class/net/$INTERFACE/address)
 
     cat <<EOF > /etc/udev/rules.d/70-persistent-net.rules
